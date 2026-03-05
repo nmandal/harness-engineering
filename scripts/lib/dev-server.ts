@@ -1,4 +1,5 @@
 import { spawn, type ChildProcess } from "node:child_process";
+import { once } from "node:events";
 
 export function startAppServer(port: number): ChildProcess {
   return spawn(
@@ -34,14 +35,21 @@ export async function waitForUrl(url: string, timeoutMs: number = 30000): Promis
 }
 
 export async function stopProcess(child: ChildProcess): Promise<void> {
-  if (child.killed) {
+  if (child.exitCode !== null || child.signalCode !== null) {
     return;
   }
 
   child.kill("SIGTERM");
-  await new Promise((resolve) => setTimeout(resolve, 150));
 
-  if (!child.killed) {
+  const exited = await Promise.race<boolean>([
+    once(child, "exit").then(() => true),
+    new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 2000))
+  ]);
+
+  if (!exited) {
     child.kill("SIGKILL");
+    await once(child, "exit").catch(() => {
+      // Ignore errors when process exit cannot be observed.
+    });
   }
 }
