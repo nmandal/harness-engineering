@@ -1,0 +1,63 @@
+name: Low Risk Automerge
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    if: contains(github.event.pull_request.labels.*.name, 'automerge-low-risk')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate low-risk file set and enable auto-merge
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const number = pr.number;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner,
+              repo,
+              pull_number: number,
+              per_page: 100
+            });
+
+            const allowedPrefixes = ["docs/", "workshops/", "artifacts/"];
+            const allowedExact = ["AGENTS.md", "README.md", "ARCHITECTURE.md"];
+
+            const disallowed = files
+              .map((f) => f.filename)
+              .filter((name) => {
+                if (allowedExact.includes(name)) return false;
+                if (name.endsWith(".md") && allowedPrefixes.some((prefix) => name.startsWith(prefix))) return false;
+                return true;
+              });
+
+            if (disallowed.length > 0) {
+              core.setFailed(`Low-risk automerge blocked; disallowed files: ${disallowed.join(", ")}`);
+              return;
+            }
+
+            await github.graphql(
+              `mutation($pullRequestId: ID!) {
+                enablePullRequestAutoMerge(input: {
+                  pullRequestId: $pullRequestId,
+                  mergeMethod: SQUASH
+                }) {
+                  pullRequest { id }
+                }
+              }`,
+              {
+                pullRequestId: pr.node_id
+              }
+            );
+
+            core.info(`Enabled auto-merge for PR #${number}`);

@@ -1,0 +1,44 @@
+{
+  "name": "harness-eng",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Harness-ready Codex flagship repository",
+  "license": "MIT",
+  "packageManager": "pnpm@9.8.0",
+  "engines": {
+    "node": ">=18.16.0",
+    "pnpm": ">=9.0.0"
+  },
+  "keywords": [
+    "harness-engineering",
+    "codex",
+    "agent-first",
+    "typescript",
+    "scaffolding"
+  ],
+  "scripts": {
+    "bootstrap": "pnpm install && pnpm hooks:install && pnpm quality:update",
+    "dev": "pnpm worktree:dev",
+    "hooks:install": "git config core.hooksPath .githooks",
+    "lint:docs": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/lint-docs.ts",
+    "lint:architecture": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/lint-architecture.ts",
+    "verify:ui": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/verify-ui.ts",
+    "verify:obs": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/verify-obs.ts",
+    "verify": "pnpm verify:ui && pnpm verify:obs",
+    "quality:update": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/quality-score.ts update",
+    "doc:garden": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/doc-gardener.ts",
+    "worktree:dev": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/worktree-dev.ts",
+    "scaffold:domain": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/scaffold-domain.ts",
+    "review:check": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/check-review-loop.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:all": "pnpm lint:docs && pnpm lint:architecture && pnpm test && pnpm verify:ui && pnpm verify:obs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}

@@ -1,0 +1,134 @@
+:root {
+  --bg: #f5eee0;
+  --ink: #171712;
+  --accent: #e94e1b;
+  --muted: #5c503f;
+  --panel: rgba(255, 253, 248, 0.92);
+  --good: #19664a;
+  --warn: #8c2f1a;
+  --shadow: 0 24px 60px rgba(40, 22, 12, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(233, 78, 27, 0.24), transparent 46%),
+    radial-gradient(circle at 80% 18%, rgba(21, 102, 74, 0.18), transparent 42%),
+    linear-gradient(140deg, #f8f3e7 0%, #e7dcc3 100%);
+}
+
+.stage {
+  width: min(1120px, 92vw);
+  margin: 5vh auto;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.intro {
+  background: var(--panel);
+  border: 2px solid rgba(23, 23, 18, 0.22);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  border-radius: 22px;
+  transform: rotate(-1deg);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Copperplate", "Papyrus", "Lucida Console", monospace;
+  letter-spacing: 0.04em;
+}
+
+.panel {
+  background: var(--panel);
+  border: 2px solid rgba(23, 23, 18, 0.24);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(transparent 92%, rgba(23, 23, 18, 0.05) 92%);
+  background-size: 100% 18px;
+  pointer-events: none;
+}
+
+.panel-good {
+  border-color: rgba(25, 102, 74, 0.5);
+}
+
+.panel-warning {
+  border-color: rgba(140, 47, 26, 0.5);
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.metric-grid article {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.9rem;
+  border-radius: 12px;
+}
+
+button {
+  margin-top: 1rem;
+  border: none;
+  background: var(--ink);
+  color: white;
+  padding: 0.75rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: "Lucida Console", Monaco, monospace;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  background: var(--accent);
+}
+
+.status-banner {
+  padding: 1.25rem;
+  background: rgba(255, 253, 248, 0.8);
+  border-left: 6px solid var(--accent);
+}
+
+@media (max-width: 900px) {
+  .stage {
+    grid-template-columns: 1fr;
+  }
+
+  .intro {
+    transform: none;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}

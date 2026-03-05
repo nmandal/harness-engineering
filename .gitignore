@@ -1,0 +1,8 @@
+node_modules
+.pnpm-store
+app/node_modules
+app/dist
+coverage
+artifacts/*
+!artifacts/.gitkeep
+.DS_Store
