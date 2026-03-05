@@ -8,6 +8,7 @@ Status: Active
 
 - [Getting Started](./GETTING_STARTED.md)
 - [Extending Guide](./EXTENDING.md)
+- [Build Recipes](./BUILD_RECIPES.md)
 - [Design Docs](./design-docs/index.md)
 - [Product Specs](./product-specs/index.md)
 - [Execution Plans](./exec-plans/index.md)

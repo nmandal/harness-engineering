@@ -31,10 +31,10 @@ pnpm check:all
 Use the built-in generator:
 
 ```bash
-pnpm scaffold:domain --name billing --wire
+pnpm quickstart --name billing
 ```
 
-This creates a full domain layer set and optionally wires the panel into the app shell.
+This creates a full domain layer set, wires it into the app shell, and runs checks.
 
 ## What We Review For
 

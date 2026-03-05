@@ -1,90 +1,55 @@
 # Harness Engineering Starter
 
-A production-minded starter for building agent-first applications with Codex-style harness patterns.
+Build real apps fast with an agent-first harness: docs as source-of-truth, mechanical guardrails, runtime evidence checks, and scaffolding that keeps architecture clean.
 
-It includes:
-
-- docs-as-system-of-record
-- mechanical guardrails (docs + architecture linting)
-- runtime evidence contracts (UI + observability)
-- worktree-aware local development
-- reusable domain scaffolding
-
-## Who this is for
-
-Use this repo if you want to:
-
-1. start a real app quickly
-2. keep architecture coherent as velocity increases
-3. encode review quality into scripts and CI
-4. make projects legible to coding agents and humans
-
-## Quick start
+## Start in 2 Minutes
 
 ```bash
-git clone <your-fork-url>
-cd harness-eng
+git clone https://github.com/nmandal/harness-engineering.git
+cd harness-engineering
 pnpm bootstrap
-pnpm check:all
+pnpm quickstart --name billing
 pnpm dev
 ```
 
-## Day-to-day commands
+`pnpm quickstart` will scaffold a full domain, wire it into the app shell, run all checks, and print exact next edits.
+
+## Why this starter is useful
+
+- **Immediate build path**: one command (`pnpm quickstart`) creates a real domain you can extend.
+- **Guardrails by default**: docs and architecture drift are blocked by scripts + CI.
+- **Evidence contracts**: UI/observability checks emit machine-readable artifacts.
+- **Agent legibility**: repo structure and docs support long-horizon agent work.
+
+## Core Commands
 
 - `pnpm dev` — start app on deterministic worktree port
-- `pnpm check:all` — run all enforced checks
-- `pnpm verify` — generate UI + observability evidence
-- `pnpm quality:update` — refresh `docs/QUALITY_SCORE.md`
+- `pnpm quickstart --name <domain>` — scaffold + wire + validate a new domain
+- `pnpm scaffold:domain --name <domain> [--wire]` — scaffold only
+- `pnpm check:all` — lint + tests + UI/obs verification
+- `pnpm verify` — UI + observability evidence generation
+- `pnpm quality:update` — refresh managed quality score block
 - `pnpm doc:garden` — generate stale/orphan docs report
 
-## Scaffold a new domain
+## Build Recipes
 
-```bash
-pnpm scaffold:domain --name billing --wire
-```
+- [Getting Started](./docs/GETTING_STARTED.md)
+- [Extending Guide](./docs/EXTENDING.md)
+- [Build Recipes](./docs/BUILD_RECIPES.md)
 
-Generates:
+## Architecture Contract
 
-- `app/src/domains/billing/{types,config,repo,providers,service,runtime,ui}/*`
-- `docs/product-specs/billing.md`
-- index update in `docs/product-specs/index.md`
-- optional app-shell wiring (`--wire`)
-
-Then run:
-
-```bash
-pnpm check:all
-```
-
-## Architecture contract
-
-Domain layers:
+Layering inside each domain:
 
 `types -> config -> repo -> providers -> service -> runtime -> ui`
 
 - imports must not move backward
-- cross-domain imports are blocked except through provider boundaries
+- cross-domain imports are blocked except via provider boundaries
 
-## Project docs
-
-- [AGENTS.md](./AGENTS.md)
-- [ARCHITECTURE.md](./ARCHITECTURE.md)
-- [docs/index.md](./docs/index.md)
-- [CONTRIBUTING.md](./CONTRIBUTING.md)
-- [SECURITY.md](./SECURITY.md)
-
-## Open source
+## Open Source
 
 - License: [MIT](./LICENSE)
+- Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md)
 - Code of Conduct: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
 - Security policy: [SECURITY.md](./SECURITY.md)
-- Contribution guide: [CONTRIBUTING.md](./CONTRIBUTING.md)
-
-## Releases
-
-This repository uses Release Please via [`.github/workflows/release.yml`](./.github/workflows/release.yml).
-
-- Pushes to `main` update or create a release PR.
-- Merging the release PR updates `CHANGELOG.md`, tags a new version (`v*`), and creates a GitHub release.
-
-Use Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, `docs:`) to get accurate changelog entries.
+- Releases: [release.yml](./.github/workflows/release.yml) + Release Please
