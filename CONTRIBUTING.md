@@ -31,7 +31,7 @@ pnpm check:all
 Use the built-in generator:
 
 ```bash
-pnpm quickstart --name billing
+pnpm scaffold:app --name billing
 ```
 
 This creates a full domain layer set, wires it into the app shell, and runs checks.

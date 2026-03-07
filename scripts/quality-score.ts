@@ -40,7 +40,7 @@ function renderManagedTable(repoRoot: string): string {
   const enablementSignals = [
     hasPath(repoRoot, "skills/pr-ready-change/SKILL.md"),
     hasPath(repoRoot, "skills/safe-refactor-migration/SKILL.md"),
-    hasPath(repoRoot, "workshops/codex-pr-lab.md")
+    hasPath(repoRoot, "scripts/quickstart.ts")
   ].filter(Boolean).length;
 
   const runtimeScore = 60 + legibilitySignals * 13;
@@ -76,7 +76,7 @@ function renderManagedTable(repoRoot: string): string {
       domain: "Enablement Readiness",
       score: enablementScore,
       evidence: `${enablementSignals}/3 core enablement assets present`,
-      next: "Expand workshops and skills with team-specific variants"
+      next: "Expand scaffolding templates and publish additional starter recipes"
     }
   ];
 

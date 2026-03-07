@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ChildProcess } from "node:child_process";
 import { computeWorktreePorts } from "./lib/worktree.js";
-import { startAppServer, stopProcess, waitForUrl } from "./lib/dev-server.js";
+import { fetchWithTimeout, startAppServer, stopProcess, waitForUrl } from "./lib/dev-server.js";
 
 interface ObsPayload {
   startupMs: number;
@@ -34,17 +34,30 @@ function readObservedStartupMs(repoRoot: string): number {
 
 async function isHealthy(baseUrl: string): Promise<boolean> {
   try {
-    const response = await fetch(`${baseUrl}/__health`);
+    const response = await fetchWithTimeout(`${baseUrl}/__health`);
     return response.ok;
   } catch {
     return false;
   }
 }
 
+function allowOfflineMode(): boolean {
+  if (process.env.VERIFY_ALLOW_OFFLINE === "1") {
+    return true;
+  }
+
+  if (process.env.VERIFY_ALLOW_OFFLINE === "0") {
+    return false;
+  }
+
+  return !Boolean(process.env.CI);
+}
+
 export async function verifyObs(repoRoot: string = process.cwd()): Promise<boolean> {
   const ports = computeWorktreePorts(repoRoot);
   const startupBudgetMs = Number(process.env.STARTUP_BUDGET_MS ?? 800);
   const maxErrors = Number(process.env.MAX_ERROR_COUNT ?? 0);
+  const offlineAllowed = allowOfflineMode();
   const baseUrl = `http://127.0.0.1:${ports.appPort}`;
 
   const artifactsDir = path.join(repoRoot, "artifacts");
@@ -66,7 +79,7 @@ export async function verifyObs(repoRoot: string = process.cwd()): Promise<boole
     if (!healthy) {
       server = startAppServer(ports.appPort);
       startedServer = true;
-      await waitForUrl(`${baseUrl}/__health`).catch(() => {
+      await waitForUrl(`${baseUrl}/__health`, 8000).catch(() => {
         // handled below via healthy probe
       });
       healthy = await isHealthy(baseUrl);
@@ -76,7 +89,7 @@ export async function verifyObs(repoRoot: string = process.cwd()): Promise<boole
       throw new Error(`Could not reach app health endpoint at ${baseUrl}/__health`);
     }
 
-    const response = await fetch(`${baseUrl}/__obs`);
+    const response = await fetchWithTimeout(`${baseUrl}/__obs`, 5000);
     if (!response.ok) {
       throw new Error(`Observability endpoint failed with ${response.status}`);
     }
@@ -97,13 +110,14 @@ export async function verifyObs(repoRoot: string = process.cwd()): Promise<boole
     }
   }
 
-  const pass = startupMs <= startupBudgetMs && errorCount <= maxErrors;
+  const pass = startupMs <= startupBudgetMs && errorCount <= maxErrors && (mode === "live" || offlineAllowed);
 
   fs.writeFileSync(
     evidencePath,
     JSON.stringify(
       {
         mode,
+        offlineAllowed,
         startupMs,
         errorCount,
         startupBudgetMs,

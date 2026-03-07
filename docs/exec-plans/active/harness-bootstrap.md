@@ -6,12 +6,12 @@ Status: Active
 
 ## Scope
 
-Initialize repository scaffolding, enforcement scripts, lightweight demo app, CI workflows, skills, and enablement assets.
+Initialize repository scaffolding, enforcement scripts, lightweight demo app, CI workflows, skills, and starter enablement assets.
 
 ## Decision Log
 
 - 2026-03-05: Chose TypeScript + Node + pnpm for velocity and local toolchain fit.
-- 2026-03-05: Chose single flagship repo strategy for direct recruiter shareability.
+- 2026-03-05: Chose single flagship repo strategy for straightforward open-source adoption.
 - 2026-03-05: Chose docs-first plus lightweight UI over heavy web polish.
 
 ## Progress
@@ -21,7 +21,7 @@ Initialize repository scaffolding, enforcement scripts, lightweight demo app, CI
 - [x] Enforcement scripts finalized
 - [x] CI workflows finalized
 - [x] Skills finalized
-- [x] Portfolio packet finalized
+- [x] Starter onboarding flow finalized
 
 ## Risks
 
@@ -31,4 +31,4 @@ Initialize repository scaffolding, enforcement scripts, lightweight demo app, CI
 ## Next Actions
 
 1. Maintain freshness metadata in docs.
-2. Add external publication links as they are published.
+2. Expand domain scaffolding templates for more real-world use cases.

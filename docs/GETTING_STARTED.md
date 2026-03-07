@@ -30,7 +30,7 @@ pnpm dev
 ## First extension step
 
 ```bash
-pnpm scaffold:domain --name billing --wire
+pnpm scaffold:app --name billing
 pnpm check:all
 ```
 
@@ -39,3 +39,4 @@ pnpm check:all
 - If `verify:ui` fails, inspect `artifacts/ui-evidence.json`.
 - If `verify:obs` fails, inspect `artifacts/obs-evidence.json`.
 - If docs lint fails, make sure metadata fields and index links are present.
+- In constrained environments where local ports are blocked, run with `VERIFY_ALLOW_OFFLINE=1 pnpm check:all`.

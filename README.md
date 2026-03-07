@@ -8,11 +8,11 @@ Build real apps fast with an agent-first harness: docs as source-of-truth, mecha
 git clone https://github.com/nmandal/harness-engineering.git
 cd harness-engineering
 pnpm bootstrap
-pnpm quickstart --name billing
+pnpm scaffold:app --name billing
 pnpm dev
 ```
 
-`pnpm quickstart` will scaffold a full domain, wire it into the app shell, run all checks, and print exact next edits.
+`pnpm scaffold:app` scaffolds a full domain, wires it into the app shell, runs checks, and prints exact next edits.
 
 ## Why this starter is useful
 
@@ -24,6 +24,7 @@ pnpm dev
 ## Core Commands
 
 - `pnpm dev` — start app on deterministic worktree port
+- `pnpm scaffold:app --name <domain>` — fastest path: scaffold + wire + validate
 - `pnpm quickstart --name <domain>` — scaffold + wire + validate a new domain
 - `pnpm scaffold:domain --name <domain> [--wire]` — scaffold only
 - `pnpm check:all` — lint + tests + UI/obs verification
@@ -36,6 +37,14 @@ pnpm dev
 - [Getting Started](./docs/GETTING_STARTED.md)
 - [Extending Guide](./docs/EXTENDING.md)
 - [Build Recipes](./docs/BUILD_RECIPES.md)
+
+## What to build first
+
+1. Run `pnpm scaffold:app --name payments`.
+2. Open `app/src/domains/payments/service/paymentsService.ts` and implement real business behavior.
+3. Update acceptance criteria in `docs/product-specs/payments.md`.
+4. Run `pnpm check:all`.
+5. Capture artifacts in `artifacts/ui-evidence.json` and `artifacts/obs-evidence.json`.
 
 ## Architecture Contract
 

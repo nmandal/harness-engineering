@@ -7,7 +7,7 @@ Status: Active
 ## Recipe 1: Add a New Product Domain
 
 ```bash
-pnpm quickstart --name billing
+pnpm scaffold:app --name billing
 ```
 
 Then edit:

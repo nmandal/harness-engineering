@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ChildProcess } from "node:child_process";
 import { computeWorktreePorts } from "./lib/worktree.js";
-import { startAppServer, stopProcess, waitForUrl } from "./lib/dev-server.js";
+import { fetchWithTimeout, startAppServer, stopProcess, waitForUrl } from "./lib/dev-server.js";
 
 interface UiCheckPayload {
   criticalWorkflowReady: boolean;
@@ -18,11 +18,23 @@ function writePlaceholderPng(filePath: string): void {
 
 async function isHealthy(baseUrl: string): Promise<boolean> {
   try {
-    const response = await fetch(`${baseUrl}/__health`);
+    const response = await fetchWithTimeout(`${baseUrl}/__health`);
     return response.ok;
   } catch {
     return false;
   }
+}
+
+function allowOfflineMode(): boolean {
+  if (process.env.VERIFY_ALLOW_OFFLINE === "1") {
+    return true;
+  }
+
+  if (process.env.VERIFY_ALLOW_OFFLINE === "0") {
+    return false;
+  }
+
+  return !Boolean(process.env.CI);
 }
 
 async function checkUiSignal(baseUrl: string, body: string): Promise<{ pass: boolean; viaEndpoint: boolean }> {
@@ -31,7 +43,7 @@ async function checkUiSignal(baseUrl: string, body: string): Promise<{ pass: boo
   }
 
   try {
-    const response = await fetch(`${baseUrl}/__ui-check`);
+    const response = await fetchWithTimeout(`${baseUrl}/__ui-check`);
     if (!response.ok) {
       return { pass: false, viaEndpoint: false };
     }
@@ -46,6 +58,7 @@ async function checkUiSignal(baseUrl: string, body: string): Promise<{ pass: boo
 export async function verifyUi(repoRoot: string = process.cwd()): Promise<boolean> {
   const ports = computeWorktreePorts(repoRoot);
   const route = process.env.VERIFY_ROUTE ?? "/";
+  const offlineAllowed = allowOfflineMode();
   const baseUrl = `http://127.0.0.1:${ports.appPort}`;
 
   fs.mkdirSync(path.join(repoRoot, "artifacts"), { recursive: true });
@@ -68,7 +81,7 @@ export async function verifyUi(repoRoot: string = process.cwd()): Promise<boolea
     if (!healthy) {
       server = startAppServer(ports.appPort);
       startedServer = true;
-      await waitForUrl(`${baseUrl}/__health`).catch(() => {
+      await waitForUrl(`${baseUrl}/__health`, 8000).catch(() => {
         // handled below via healthy probe
       });
       healthy = await isHealthy(baseUrl);
@@ -78,7 +91,7 @@ export async function verifyUi(repoRoot: string = process.cwd()): Promise<boolea
       throw new Error(`Could not reach app health endpoint at ${baseUrl}/__health`);
     }
 
-    const response = await fetch(`${baseUrl}${route}`);
+    const response = await fetchWithTimeout(`${baseUrl}${route}`, 5000);
     statusCode = response.status;
     body = await response.text();
 
@@ -101,8 +114,13 @@ export async function verifyUi(repoRoot: string = process.cwd()): Promise<boolea
   fs.writeFileSync(domPath, body);
   writePlaceholderPng(screenshotPath);
 
+  if (mode === "offline" && !offlineAllowed) {
+    pass = false;
+  }
+
   const payload = {
     mode,
+    offlineAllowed,
     route,
     screenshotPath: path.relative(repoRoot, screenshotPath),
     domSnapshotPath: path.relative(repoRoot, domPath),
