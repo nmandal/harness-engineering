@@ -49,3 +49,21 @@ pnpm verify
 3. Add workflow step in `.github/workflows/ci.yml`.
 4. Add test in `tests/`.
 5. Update `AGENTS.md` and docs index if needed.
+
+## Recipe 5: Start a Monorepo Workforce (Next.js + FastAPI)
+
+```bash
+pnpm scaffold:workforce --web studio --api core
+pnpm install
+pnpm --dir apps/studio dev
+```
+
+Service bootstrap:
+
+```bash
+cd services/core
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+uvicorn app.main:app --reload --port 8000
+```

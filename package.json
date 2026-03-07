@@ -30,6 +30,7 @@
     "doc:garden": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/doc-gardener.ts",
     "worktree:dev": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/worktree-dev.ts",
     "scaffold:domain": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/scaffold-domain.ts",
+    "scaffold:workforce": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/scaffold-workforce.ts",
     "scaffold:app": "pnpm quickstart",
     "quickstart": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/quickstart.ts",
     "review:check": "TS_NODE_TRANSPILE_ONLY=1 node --no-warnings --loader ts-node/esm scripts/check-review-loop.ts",

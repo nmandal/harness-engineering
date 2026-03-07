@@ -16,6 +16,36 @@ pnpm scaffold:domain --name accounts --wire
 3. Update `docs/product-specs/accounts.md` with real acceptance criteria.
 4. Run `pnpm check:all`.
 
+## Bootstrap a Monorepo Workforce Starter
+
+1. Scaffold a Next.js app and FastAPI service:
+
+```bash
+pnpm scaffold:workforce --web studio --api core
+```
+
+2. Install JS dependencies:
+
+```bash
+pnpm install
+```
+
+3. Start the Next app:
+
+```bash
+pnpm --dir apps/studio dev
+```
+
+4. Start the FastAPI service (optional):
+
+```bash
+cd services/core
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+uvicorn app.main:app --reload --port 8000
+```
+
 ## Add New Guardrails
 
 1. Implement script under `scripts/`.

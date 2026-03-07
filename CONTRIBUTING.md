@@ -36,6 +36,12 @@ pnpm scaffold:app --name billing
 
 This creates a full domain layer set, wires it into the app shell, and runs checks.
 
+For monorepo starters (Next.js + FastAPI):
+
+```bash
+pnpm scaffold:workforce --web studio --api core
+```
+
 ## What We Review For
 
 - Documentation integrity (`pnpm lint:docs`)

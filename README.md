@@ -6,7 +6,7 @@
 
 Open-source starter for **agent-first application development**.
 
-This repo gives you a ready harness: docs as system-of-record, architecture guardrails, worktree-aware runtime, machine-readable evidence artifacts, and one-command app-domain scaffolding.
+This repo gives you a ready harness: docs as system-of-record, architecture guardrails, worktree-aware runtime, machine-readable evidence artifacts, and one-command scaffolding for domains or full monorepo workforce starters.
 
 ## What You Can Do Immediately
 
@@ -50,12 +50,28 @@ pnpm check:all
 - `artifacts/ui-evidence.json`
 - `artifacts/obs-evidence.json`
 
+## Monorepo Workforce Bootstrap (Next.js + FastAPI)
+
+If you want the repo to become a multi-app + multi-service workforce starter immediately:
+
+```bash
+pnpm scaffold:workforce --web studio --api core
+pnpm install
+pnpm --dir apps/studio dev
+```
+
+Generated:
+- `apps/studio`: Next.js App Router + shadcn-style UI primitives + common starter dependencies
+- `services/core`: FastAPI service skeleton with health endpoint and tests
+- `docs/product-specs/studio-app.md` and `docs/product-specs/core-service.md`
+
 ## Command Interface
 
 | Command | Purpose |
 | --- | --- |
 | `pnpm bootstrap` | Install deps, install git hooks, refresh quality score |
 | `pnpm dev` | Start app on deterministic worktree-specific port |
+| `pnpm scaffold:workforce --web <app> --api <service>` | Scaffold monorepo starter (Next.js app + optional FastAPI service) |
 | `pnpm scaffold:app --name <domain>` | Fast path: scaffold + wire + validate |
 | `pnpm scaffold:domain --name <domain> [--wire]` | Scaffold domain only (optional wiring) |
 | `pnpm check:all` | Run docs lint, architecture lint, tests, UI verify, OBS verify |

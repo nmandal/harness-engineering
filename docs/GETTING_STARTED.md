@@ -34,6 +34,14 @@ pnpm scaffold:app --name billing
 pnpm check:all
 ```
 
+## Monorepo workforce start (optional)
+
+```bash
+pnpm scaffold:workforce --web studio --api core
+pnpm install
+pnpm --dir apps/studio dev
+```
+
 ## Troubleshooting
 
 - If `verify:ui` fails, inspect `artifacts/ui-evidence.json`.

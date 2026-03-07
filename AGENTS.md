@@ -42,6 +42,11 @@ Demonstrate Codex Deployment Engineering capability end-to-end:
 - `pnpm quality:update`
 - `pnpm doc:garden`
 
+## Starter Bootstrap Commands
+
+- `pnpm scaffold:app --name <domain>` for single-app domain growth
+- `pnpm scaffold:workforce --web <app> --api <service>` for monorepo workforce bootstrap
+
 ## Agent Operating Rules
 
 1. If docs and code disagree, update docs in the same PR.
