@@ -50,9 +50,9 @@ pnpm check:all
 - `artifacts/ui-evidence.json`
 - `artifacts/obs-evidence.json`
 
-## Monorepo Workforce Bootstrap (Next.js + FastAPI)
+## Monorepo Workforce Bootstrap (Composable)
 
-If you want the repo to become a multi-app + multi-service workforce starter immediately:
+You can scaffold only what you need:
 
 ```bash
 pnpm scaffold:workforce --web studio --api core
@@ -65,16 +65,30 @@ Generated:
 - `services/core`: FastAPI service skeleton with health endpoint and tests
 - `docs/product-specs/studio-app.md` and `docs/product-specs/core-service.md`
 
+Use alternative modes when you want less opinionated starts:
+
+```bash
+# Next.js only
+pnpm scaffold:next-app --web studio
+
+# FastAPI service only
+pnpm scaffold:fastapi-service --api core
+```
+
 ## Command Interface
 
 | Command | Purpose |
 | --- | --- |
 | `pnpm bootstrap` | Install deps, install git hooks, refresh quality score |
 | `pnpm dev` | Start app on deterministic worktree-specific port |
+| `pnpm dev:all` | Start all JS app workspaces with deterministic ports |
 | `pnpm scaffold:workforce --web <app> --api <service>` | Scaffold monorepo starter (Next.js app + optional FastAPI service) |
+| `pnpm scaffold:next-app --web <app>` | Scaffold only a Next.js workspace app |
+| `pnpm scaffold:fastapi-service --api <service>` | Scaffold only a FastAPI service |
 | `pnpm scaffold:app --name <domain>` | Fast path: scaffold + wire + validate |
 | `pnpm scaffold:domain --name <domain> [--wire]` | Scaffold domain only (optional wiring) |
 | `pnpm check:all` | Run docs lint, architecture lint, tests, UI verify, OBS verify |
+| `pnpm check:workspace` | Run `lint/typecheck/test` across JS workspace packages when available |
 | `pnpm lint:docs` | Enforce docs metadata, freshness, and indexing |
 | `pnpm lint:architecture` | Enforce layer and import boundaries |
 | `pnpm verify` | Run both evidence verifiers (`verify:ui`, `verify:obs`) |
@@ -179,6 +193,13 @@ The repo is designed for parallel agent work:
 3. Tighten reliability budgets in [docs/RELIABILITY.md](./docs/RELIABILITY.md).
 4. Add one custom guardrail script and wire it into CI.
 5. Keep docs/quality current with `pnpm doc:garden` and `pnpm quality:update`.
+
+## Design Principle
+
+This starter is intentionally balanced:
+
+- Opinionated where reliability matters (guardrails, evidence, docs contracts).
+- Flexible where product shape differs (choose Next only, API only, or both; add any stack under `apps/*`, `services/*`, `packages/*`).
 
 ## Open Source
 

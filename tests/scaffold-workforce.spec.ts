@@ -23,6 +23,7 @@ describe("scaffold-workforce args", () => {
     expect(parseWorkforceArgs([])).toEqual({
       web: "web",
       api: "api",
+      includeNext: true,
       includeFastApi: true,
       force: false,
       runChecks: true
@@ -30,10 +31,13 @@ describe("scaffold-workforce args", () => {
   });
 
   it("parses custom options", () => {
-    expect(parseWorkforceArgs(["--web", "studio", "--api", "core", "--no-fastapi", "--force", "--skip-check"])).toEqual(
+    expect(
+      parseWorkforceArgs(["--web", "studio", "--api", "core", "--no-next", "--no-fastapi", "--force", "--skip-check"])
+    ).toEqual(
       {
         web: "studio",
         api: "core",
+        includeNext: false,
         includeFastApi: false,
         force: true,
         runChecks: false
@@ -43,6 +47,28 @@ describe("scaffold-workforce args", () => {
 });
 
 describe("scaffold-workforce output", () => {
+  it("fails if both next and fastapi are disabled", () => {
+    withTempRepo((repoRoot) => {
+      writeFile(path.join(repoRoot, "pnpm-workspace.yaml"), "packages:\n  - app\n");
+      writeFile(
+        path.join(repoRoot, "docs", "product-specs", "index.md"),
+        "# Product Specs Index\n\nOwner: Nick\nLast Verified: 2026-03-07\nStatus: Active\n"
+      );
+      writeFile(path.join(repoRoot, "docs", "index.md"), "# Docs Index\n");
+
+      expect(() =>
+        scaffoldWorkforce(repoRoot, {
+          web: "studio",
+          api: "core",
+          includeNext: false,
+          includeFastApi: false,
+          force: false,
+          runChecks: false
+        })
+      ).toThrow(/At least one target must be enabled/);
+    });
+  });
+
   it("creates monorepo starter files and updates docs index", () => {
     withTempRepo((repoRoot) => {
       writeFile(path.join(repoRoot, "pnpm-workspace.yaml"), "packages:\n  - app\n");
@@ -55,6 +81,7 @@ describe("scaffold-workforce output", () => {
       const created = scaffoldWorkforce(repoRoot, {
         web: "studio",
         api: "core",
+        includeNext: true,
         includeFastApi: true,
         force: false,
         runChecks: false
@@ -78,4 +105,3 @@ describe("scaffold-workforce output", () => {
     });
   });
 });
-

@@ -46,6 +46,9 @@ Demonstrate Codex Deployment Engineering capability end-to-end:
 
 - `pnpm scaffold:app --name <domain>` for single-app domain growth
 - `pnpm scaffold:workforce --web <app> --api <service>` for monorepo workforce bootstrap
+- `pnpm scaffold:next-app --web <app>` for Next-only bootstrap
+- `pnpm scaffold:fastapi-service --api <service>` for FastAPI-only bootstrap
+- `pnpm dev:all` for running all JS apps in `app/` and `apps/*`
 
 ## Agent Operating Rules
 

@@ -42,6 +42,16 @@ pnpm install
 pnpm --dir apps/studio dev
 ```
 
+Alternative starts:
+
+```bash
+# Next.js only
+pnpm scaffold:next-app --web studio
+
+# FastAPI only
+pnpm scaffold:fastapi-service --api core
+```
+
 ## Troubleshooting
 
 - If `verify:ui` fails, inspect `artifacts/ui-evidence.json`.

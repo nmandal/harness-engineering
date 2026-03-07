@@ -46,6 +46,16 @@ pip install -e ".[dev]"
 uvicorn app.main:app --reload --port 8000
 ```
 
+## Run Multiple App Workspaces Together
+
+If you have several JS apps under `apps/*`, run them together:
+
+```bash
+pnpm dev:all
+```
+
+The command prints and uses deterministic local ports so each app is reachable without manual coordination.
+
 ## Add New Guardrails
 
 1. Implement script under `scripts/`.

@@ -42,6 +42,13 @@ For monorepo starters (Next.js + FastAPI):
 pnpm scaffold:workforce --web studio --api core
 ```
 
+Or use focused scaffolders:
+
+```bash
+pnpm scaffold:next-app --web studio
+pnpm scaffold:fastapi-service --api core
+```
+
 ## What We Review For
 
 - Documentation integrity (`pnpm lint:docs`)

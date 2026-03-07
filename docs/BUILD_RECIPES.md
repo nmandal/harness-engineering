@@ -67,3 +67,15 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 uvicorn app.main:app --reload --port 8000
 ```
+
+## Recipe 6: Start Every JS App in the Workspace
+
+```bash
+pnpm dev:all
+```
+
+For planning only:
+
+```bash
+pnpm dev:all -- --dry-run
+```

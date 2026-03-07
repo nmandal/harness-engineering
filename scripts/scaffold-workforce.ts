@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 interface WorkforceArgs {
   web: string;
   api: string;
+  includeNext: boolean;
   includeFastApi: boolean;
   force: boolean;
   runChecks: boolean;
@@ -89,9 +90,9 @@ function scaffoldNextApp(repoRoot: string, web: string, force: boolean): string[
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3000",
+    "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
@@ -699,16 +700,24 @@ uvicorn app.main:app --reload --port 8000
   return created;
 }
 
-function writeProductSpecs(repoRoot: string, web: string, api: string, includeFastApi: boolean, force: boolean): string[] {
+function writeProductSpecs(
+  repoRoot: string,
+  web: string,
+  api: string,
+  includeNext: boolean,
+  includeFastApi: boolean,
+  force: boolean
+): string[] {
   const created: string[] = [];
   const date = todayIso();
-  const webTitle = `${toPascalCase(web)} App Spec`;
-  const webSpecPath = `${web}-app.md`;
-  const webSpecAbsolute = path.join(repoRoot, "docs", "product-specs", webSpecPath);
+  if (includeNext) {
+    const webTitle = `${toPascalCase(web)} App Spec`;
+    const webSpecPath = `${web}-app.md`;
+    const webSpecAbsolute = path.join(repoRoot, "docs", "product-specs", webSpecPath);
 
-  writeFileSafely(
-    webSpecAbsolute,
-    `# ${webTitle}
+    writeFileSafely(
+      webSpecAbsolute,
+      `# ${webTitle}
 
 Owner: Nick
 Last Verified: ${date}
@@ -729,10 +738,11 @@ Define the user jobs this app should satisfy.
 2.
 3.
 `,
-    force
-  );
-  created.push(path.relative(repoRoot, webSpecAbsolute));
-  appendProductSpecIndex(repoRoot, webTitle, webSpecPath);
+      force
+    );
+    created.push(path.relative(repoRoot, webSpecAbsolute));
+    appendProductSpecIndex(repoRoot, webTitle, webSpecPath);
+  }
 
   if (includeFastApi) {
     const apiTitle = `${toPascalCase(api)} Service Spec`;
@@ -790,6 +800,7 @@ function runChecksIfEnabled(runChecks: boolean): void {
 export function parseWorkforceArgs(argv: string[]): WorkforceArgs {
   let web = "web";
   let api = "api";
+  let includeNext = true;
   let includeFastApi = true;
   let force = false;
   let runChecks = true;
@@ -806,6 +817,11 @@ export function parseWorkforceArgs(argv: string[]): WorkforceArgs {
     if (token === "--api") {
       api = argv[i + 1] ?? api;
       i += 1;
+      continue;
+    }
+
+    if (token === "--no-next") {
+      includeNext = false;
       continue;
     }
 
@@ -828,6 +844,7 @@ export function parseWorkforceArgs(argv: string[]): WorkforceArgs {
   return {
     web: normalizeName(web, "web"),
     api: normalizeName(api, "api"),
+    includeNext,
     includeFastApi,
     force,
     runChecks
@@ -835,16 +852,22 @@ export function parseWorkforceArgs(argv: string[]): WorkforceArgs {
 }
 
 export function scaffoldWorkforce(repoRoot: string, args: WorkforceArgs): string[] {
+  if (!args.includeNext && !args.includeFastApi) {
+    throw new Error("At least one target must be enabled. Remove --no-next or --no-fastapi.");
+  }
+
   ensureWorkspacePatterns(repoRoot);
 
   const created: string[] = [];
-  created.push(...scaffoldNextApp(repoRoot, args.web, args.force));
+  if (args.includeNext) {
+    created.push(...scaffoldNextApp(repoRoot, args.web, args.force));
+  }
 
   if (args.includeFastApi) {
     created.push(...scaffoldFastApiService(repoRoot, args.api, args.force));
   }
 
-  created.push(...writeProductSpecs(repoRoot, args.web, args.api, args.includeFastApi, args.force));
+  created.push(...writeProductSpecs(repoRoot, args.web, args.api, args.includeNext, args.includeFastApi, args.force));
   runChecksIfEnabled(args.runChecks);
   return created;
 }
@@ -853,14 +876,22 @@ function printNextSteps(args: WorkforceArgs): void {
   console.log("\nscaffold-workforce: SUCCESS");
   console.log("\nNext steps:");
   console.log("1) Install workspace dependencies: pnpm install");
-  console.log(`2) Start Next app: pnpm --dir apps/${args.web} dev`);
+  if (args.includeNext) {
+    console.log(`2) Start Next app: pnpm --dir apps/${args.web} dev`);
+  } else {
+    console.log("2) Next.js generation was skipped (--no-next).");
+  }
   if (args.includeFastApi) {
     console.log(`3) Start FastAPI: cd services/${args.api} && python -m venv .venv && source .venv/bin/activate && pip install -e \".[dev]\" && uvicorn app.main:app --reload --port 8000`);
     console.log(`4) Define service contract: docs/product-specs/${args.api}-service.md`);
   } else {
     console.log("3) FastAPI generation was skipped (--no-fastapi).");
   }
-  console.log(`5) Define app contract: docs/product-specs/${args.web}-app.md`);
+  if (args.includeNext) {
+    console.log(`5) Define app contract: docs/product-specs/${args.web}-app.md`);
+  } else {
+    console.log("5) App spec generation skipped because --no-next was provided.");
+  }
   console.log("6) Run harness checks: pnpm check:all");
 }
 
@@ -880,4 +911,3 @@ if (isMain) {
     process.exit(1);
   }
 }
-
